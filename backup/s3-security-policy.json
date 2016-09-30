@@ -1,0 +1,39 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "some-statement-sid-1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "some-statement-sid-2",
+            "Effect": "Allow",
+            "Action": [
+                "s3:CreateBucket",
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<BUCKET_PATH>",
+                "arn:aws:s3:::<BUCKET_PATH>/*"
+            ]
+        },
+        {
+            "Sid": "some-statement-sid-3",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<BUCKET_BASEPATH>"
+            ]
+        }
+    ]
+}
