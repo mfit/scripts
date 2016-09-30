@@ -32,3 +32,8 @@ Example S3 policy
 Use  limited aws access policies - the file `s3-security-policy.json` contains
 an example policy.
 
+- Create the user
+- Select to create an 'inline policy'
+- use the `s3-security-policy.json` template (just change the bucket paths,
+  and possibly statement-ids
+
