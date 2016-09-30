@@ -12,7 +12,7 @@ Install
 
  - setup a virtualenv with the boto3 library: `py/init-env.sh`
 
- - reate AWS configuration in '.aws':
+ - create AWS configuration in `~/.aws/`:
 
 .aws/credentials
 

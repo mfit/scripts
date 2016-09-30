@@ -3,6 +3,8 @@ import sys
 
 if len(sys.argv) < 4:
     print("Usage : upload.py <filename> <s3-bucket-name> <s3-key>")
+    print("Example :  upload.py thatFile.tgz myBaseBucketName"
+          " subFolderName/targetFileName.tgz")
     exit(0)
 
 s3 = boto3.resource('s3')

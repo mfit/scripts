@@ -18,7 +18,7 @@ tar -czf $_daily dump
 cp $_daily $_weekly
 
 cd $DIR
-"py/bin/python" upload.py "$_backupdir/$_daily" mfit "DBNAME/$_daily"
-"py//bin/python" upload.py "$_backupdir/$_weekly" mfit "DBNAME/$_weekly"
+"py/bin/python" upload.py "$_backupdir/$_daily" baseBucketName "subfolder/$_daily"
+"py/bin/python" upload.py "$_backupdir/$_weekly" baseBucketName "subfolder/$_weekly"
 
 echo $(date) " - backup ok! "
