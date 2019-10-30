@@ -1,0 +1,12 @@
+#
+# Install python (ansible pre-requisite)
+#
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Apt update
+      raw: apt -y update
+    - name: Install python
+      raw: apt install -y python

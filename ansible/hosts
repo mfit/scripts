@@ -1,0 +1,2 @@
+[stage]
+THE_HOSTNAME ansible_ssh_host=dev ansible_ssh_user=root

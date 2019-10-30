@@ -1,4 +1,5 @@
 # Scripts + Starters
 
-Collecetion of scripts and project starteer / project configurations.
+Collecetion of scripts and project starter / project configurations.
+
 
