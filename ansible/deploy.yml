@@ -1,0 +1,87 @@
+#
+# Deployment script.
+#
+# Usage:
+# ansible-playbook -l stage -i hosts deploy.yml
+#
+# Example that runs certain tasks only:
+# ansible-playbook -l stage -i hosts deploy.yml --tags "django"
+#
+---
+- hosts: all
+  become: true
+  # The vars.yml contains the gitlab auth tokens
+  vars_files: ['vars.yml']
+  vars:
+    # Paths on the host that will hold the config files
+    main_app_dir: /home/admin/app/the-app-name
+    data_dir: /home/admin/data
+    # Skip deploy config task until configured
+    deploy_config: false
+    # Skip django maintenance tasks for now
+    update_django: false
+  tasks:
+    - name: Log into docker registry
+      docker_login:
+        registry: registry.gitlab.com
+        username: "{{ git_user }}"
+        password: "{{ git_token }}"
+        # reauthorize: yes
+
+    # In case the deployment path should be removed first
+    # - name: Clean deployment
+    #   file: state=absent dest={{ main_app_dir }}
+    #   tags: [copyconfig]
+
+    - name: Create Directories
+      file: state=directory path={{ item }}
+      loop:
+        - "{{ main_app_dir }}/config/nginx"
+        - "{{ data_dir }}/uploads"
+        - "{{ data_dir }}/static"
+        - "{{ data_dir }}/dump"
+
+    # This task copies configuration to the host (docker-compose file and / or
+    #   service specific configuration data. The latter will then end up
+    #   mounted into the containers.
+    # To use this, provide the files that should be uploaded and enable
+    #   the task by setting deploy_config to true.
+    - name: Copy Configuration
+      when: deploy_config
+      copy: src={{ item.src }} dest={{ item.dest }}
+      tags: [config, deploy]
+      loop:
+        - { src: 'conf/docker-compose-prod.yml', dest: '{{ main_app_dir }}' }
+        - { src: 'conf/nginx/conf/site.prod.conf', dest: '{{ main_app_dir }}/config/nginx/' }
+        - { src: 'conf/django/.env', dest: '{{ main_app_dir }}' }
+
+    # Pull latest images from registry
+    - name: Pull current images
+      shell: docker-compose -f docker-compose-prod.yml pull
+      args:
+        chdir: "{{ main_app_dir }}"
+      tags: [deploy]
+
+    # Run docker-compose commands via the 'shell' module.
+    - name: Docker-compose up, restart and restart
+      shell: "{{ item }}"
+      args:
+        chdir: "{{ main_app_dir }}"
+      tags: [config, deploy, restart]
+      loop:
+        - docker-compose -f docker-compose-prod.yml up -d
+        - docker-compose -f docker-compose-prod.yml restart
+        - docker-compose -f docker-compose-prod.yml restart webapp
+
+    # Run django management commands that perform actions such as running
+    # the database migrations, if any.
+    - name: Django update (via docker exec)
+      when: update_django
+      shell: "{{ item }}"
+      tags: [migrate, restart, django]
+      args:
+        chdir: "{{ main_app_dir }}"
+      loop:
+        - "docker exec -t the-app-name_webapp_1 python labtool/manage.py collectstatic --noinput"
+        - "docker exec -t the-app-name_webapp_1 python labtool/manage.py migrate"
+

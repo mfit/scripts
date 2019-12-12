@@ -7,6 +7,13 @@ Preperation:
 
 Usage:
 
-    $ ansible-playbook -i hosts python.yml
+    # Install python
+    $ ansible-playbook -i hosts install-python.yml
+
+    # Install docker + docker-compose
+    $ ansible-playbook -i hosts install-docker.yml
+
+    # Deployment
+    $ ansible-playbook -i hosts deploy.yml
 
 
