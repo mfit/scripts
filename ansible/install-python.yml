@@ -1,5 +1,5 @@
 #
-# Install python (ansible pre-requisite)
+# Install python on a host - a pre-requisite for using ansible
 #
 ---
 - hosts: all

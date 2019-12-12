@@ -35,11 +35,3 @@
 
     - name: Make docker-compose executable
       raw: chmod +x /usr/local/bin/docker-compose
-
-    # - name: Add an 'admin' user
-    #   user:
-    #     name: admin
-    #     comment: Admin
-    #     shell: /bin/bash
-    #   tags:
-    #     - setup
