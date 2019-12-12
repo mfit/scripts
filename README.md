@@ -1,7 +1,6 @@
 # Scripts + Starters
 
-Collecetion of scripts and project starter / project configurations.
-
+Collection of scripts and project starter / project configurations.
 
 ## Letsencrypt
 
