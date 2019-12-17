@@ -1,9 +1,9 @@
 Collection of ansible playbooks
 ===============================
 
-Preperation:
+Preparation:
 
- - adapt the `hosts` file
+ - adapt the `hosts` file, setting host-handle, host (SSHCONFIG_HOST_NAME), and username
 
 Usage:
 
