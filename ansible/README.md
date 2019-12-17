@@ -1,6 +1,8 @@
 Collection of ansible playbooks
 ===============================
 
+Official ansible documentation: https://docs.ansible.com/ansible/latest/index.html
+
 Preparation:
 
  - adapt the `hosts` file, setting host-handle, host (SSHCONFIG_HOST_NAME), and username
