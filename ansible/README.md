@@ -16,4 +16,11 @@ Usage:
     # Deployment
     $ ansible-playbook -i hosts deploy.yml
 
+    # UFW setup (uncomplicated firewall)
+    $ ansible-playbook -i hosts ufw.yml
+
+    # Shell tasks for some maintenance/setup tasks
+    # for mysql databases in docker container
+    $ ansible-playbook -i hosts ufw.yml
+
 

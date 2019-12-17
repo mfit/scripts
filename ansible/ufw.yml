@@ -1,0 +1,42 @@
+#
+# UFW configuration
+#
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Enable with default deny
+      ufw:
+        state: enabled
+        policy: deny
+
+    - name: Set logging
+      ufw:
+        logging: 'on'
+
+    - name: Allow outgoing
+      ufw:
+        direction: out
+        rule: allow
+
+    - name: Limit SSH logins
+      ufw:
+        rule: limit
+        port: ssh
+        proto: tcp
+
+    - name: Allow SSH
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Allow Web
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - '80'
+        - '443'
+
+

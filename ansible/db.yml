@@ -1,0 +1,33 @@
+#
+# Db operations (create, import) for mysql running in container
+#
+---
+- hosts: all
+  become: true
+  vars:
+    main_app_dir: /home/admin/app
+    db_name: DB_NAME
+    db_container: CONTAINER_NAME
+    db_password: DB_PASSWORD
+  tasks:
+    - name: Drop existing db
+      tags: [never, all, drop]
+      args:
+        chdir: "{{ main_app_dir }}"
+      shell: "docker exec -t {{ db_container }} bash -c 'mysql -u root --password={{ db_password }} -e \"drop database if exists {{ db_name }}\"'"
+
+    - name: Create db
+      tags: [never, all, create]
+      shell: "{{ item }}"
+      args:
+        chdir: "{{ main_app_dir }}"
+      loop:
+        - "docker exec -t {{ db_container }} bash -c 'mysql -u root --password={{ db_password }} -e \"create database {{ db_name }}\"'"
+
+    - name: Import db
+      tags: [never, all, import]
+      shell: "{{ item }}"
+      args:
+        chdir: "{{ main_app_dir }}"
+      loop:
+        - "docker exec -t {{ db_container }} bash -c 'mysql -u root --password={{ db_password }} {{ db_name }} < /var/dump/import.sql'"
