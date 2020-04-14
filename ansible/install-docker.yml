@@ -4,34 +4,65 @@
 ---
 - hosts: all
   become: true
+  vars:
+    docker_compose_version: "1.24.1"
   tasks:
     - name: Install aptitude using apt
       apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+      tags: ['apt']
 
     - name: Upgrade
       apt: upgrade=safe
+      tags: ['apt']
 
-    # TODO: check if all of these are required, as we are
-    # not even using the ansible docker commands
     - name: Install required system packages
       apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'python3-setuptools']
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+      tags: ['apt']
 
     - name: Add Docker GPG apt Key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
+      tags: ['docker']
 
     - name: Add Docker Repository
       apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu bionic stable
         state: present
+      tags: ['docker']
 
     - name: Update apt and install docker-ce
       apt: update_cache=yes name=docker-ce state=latest
+      tags: ['docker']
 
     - name: Raw fetch docker-compose
-      raw: sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      raw: sudo curl -L "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      tags: ['compose']
 
     - name: Make docker-compose executable
       raw: chmod +x /usr/local/bin/docker-compose
+      tags: ['compose']
+
+    - name: Add an 'admin' user
+      user:
+        name: admin
+        comment: Admin
+        shell: /bin/bash
+      tags: ['users']
+
+    - name: Remove Docker Module for Python
+      pip:
+        executable: pip3
+        state: absent
+        name:
+         - docker
+         - docker-py
+      tags: ['docker-ansible']
+    - name: Install Docker Module for Python
+      pip:
+        executable: pip3
+        name:
+         - docker
+      tags: ['docker-ansible']
+
